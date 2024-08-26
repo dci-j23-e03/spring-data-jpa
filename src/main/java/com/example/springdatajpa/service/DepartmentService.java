@@ -26,7 +26,7 @@ public class DepartmentService {
     }
 
     public Department getDepartment(String name) {
-        return departmentRepository.findByName(name);
+        return departmentRepository.findByNameCustomQuery(name);
     }
 
     public List<Department> getAllDepartments() {
