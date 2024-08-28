@@ -3,6 +3,10 @@ package com.example.springdatajpa.service;
 import com.example.springdatajpa.entity.Department;
 import com.example.springdatajpa.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,8 +33,12 @@ public class DepartmentService {
         return departmentRepository.findByNameCustomQuery(name);
     }
 
-    public List<Department> getAllDepartments() {
-        return (List<Department>) departmentRepository.findAll();
+    public List<Department> getAllDepartments(Integer pageNo, Integer pageSize, String sortBy, String order) {
+//        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.Direction.fromString(order), sortBy);
+        Page<Department> departmentsPage = departmentRepository.findAll(pageable);
+
+        return departmentsPage.getContent();
     }
 
     public Department updateDepartment(Long id, Department department) {
