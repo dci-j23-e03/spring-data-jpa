@@ -3,9 +3,12 @@ package com.example.springdatajpa.controller;
 import com.example.springdatajpa.entity.Department;
 import com.example.springdatajpa.service.DepartmentService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -14,13 +17,19 @@ public class DepartmentController {
 
     private final DepartmentService departmentService;
 
-    public DepartmentController(@Autowired DepartmentService departmentService) {
+    public DepartmentController(DepartmentService departmentService) {
         this.departmentService = departmentService;
     }
 
     @PostMapping
-    public Department createDepartment(@Valid @RequestBody Department department) {
-        return departmentService.saveDepartment(department);
+    public ResponseEntity<Department> createDepartment(@Valid @RequestBody Department department) {
+        Department savedDepartment = departmentService.saveDepartment(department);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedDepartment.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(savedDepartment);
     }
 
     @GetMapping
@@ -33,8 +42,8 @@ public class DepartmentController {
         return departmentService.getAllDepartments(pageNo, pageSize, sortBy, sortingOrder);
     }
 
-    @GetMapping("/{id}")
-    public Department getDepartmentById(@PathVariable Long id) {
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public @ResponseBody Department getDepartmentById(@PathVariable Long id) {
         return departmentService.getDepartment(id);
     }
 
@@ -44,7 +53,8 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public Department updateDepartment(@PathVariable Long id, @RequestBody Department department) {
+    public Department updateDepartment(@NotNull @PathVariable Long id, @Valid @RequestBody Department department) {
+//        Objects.nonNull(department.getId());
         return departmentService.updateDepartment(id, department);
     }
 
