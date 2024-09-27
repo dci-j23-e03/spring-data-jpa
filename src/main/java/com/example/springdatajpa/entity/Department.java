@@ -24,4 +24,5 @@ public class Department {
     private String address;
     @NotBlank
     private String code;
+
 }
