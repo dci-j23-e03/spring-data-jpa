@@ -1,9 +1,6 @@
 package com.example.springdatajpa.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,10 +16,12 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
+    @Column(name = Department_.name)
     private String name;
     @NotBlank
     private String address;
     @NotBlank
+    @Column(name = Department_.code)
     private String code;
 
 }
