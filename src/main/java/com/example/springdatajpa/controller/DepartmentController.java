@@ -34,48 +34,68 @@ public class DepartmentController {
         }
 
         Department savedDepartment = departmentService.saveDepartment(department);
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedDepartment.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(savedDepartment);
+        if(savedDepartment != null) {
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(savedDepartment.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(savedDepartment);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
-    public List<Department> getAllDepartments(
+    public ResponseEntity<List<Department>> getAllDepartments(
             @RequestParam(defaultValue = "1") @Positive(message = "Needs to be positive number") Integer pageNo,
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer pageSize,
             @RequestParam(defaultValue = "id") @NotBlank String sortBy,
             @RequestParam(defaultValue = "asc") @NotBlank String sortingOrder
     ) {
         if (validateSortBy(sortBy)) {
-            return departmentService.getAllDepartments(pageNo, pageSize, sortBy, sortingOrder);
+            return ResponseEntity.ok(departmentService.getAllDepartments(pageNo, pageSize, sortBy, sortingOrder));
         }
-        return List.of();
+        return ResponseEntity.ok(List.of());
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    public @ResponseBody Department getDepartmentById(@PathVariable @Positive Long id) {
-        return departmentService.getDepartment(id);
+    public @ResponseBody ResponseEntity<Department> getDepartmentById(@PathVariable @Positive Long id) {
+        Department department = departmentService.getDepartment(id);
+        if (department == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(department);
+        }
     }
 
     @GetMapping("/single/{name}")
-    public Department getDepartmentByName(@PathVariable String name) {
-        return departmentService.getDepartment(name);
+    public ResponseEntity<Department> getDepartmentByName(@PathVariable String name) {
+        Department department = departmentService.getDepartment(name);
+        if (department == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(department);
+        }
     }
 
     // using @Valid annotation to trigger constraints annotation in entity
     // it is pretty much doing the same as in our manual validator
     @PutMapping("/{id}")
-    public Department updateDepartment(@NotNull @PathVariable Long id, @Valid @RequestBody Department department) {
+    public ResponseEntity<Department> updateDepartment(@NotNull @PathVariable Long id, @Valid @RequestBody Department department) {
 //        Objects.nonNull(department.getId());
-        return departmentService.updateDepartment(id, department);
+        Department updatedDepartment = departmentService.updateDepartment(id, department);
+        if (updatedDepartment != null) {
+            return ResponseEntity.ok(updatedDepartment);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("{id}")
-    public void deleteDepartment(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteDepartment(@PathVariable Long id) {
         departmentService.deleteDepartment(id);
+        return ResponseEntity.noContent().build();
     }
 
     private boolean validateSortBy(String sortBy) {

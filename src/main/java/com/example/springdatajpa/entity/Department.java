@@ -16,12 +16,10 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank
-    @Column(name = Department_.name)
     private String name;
     @NotBlank
     private String address;
     @NotBlank
-    @Column(name = Department_.code)
     private String code;
 
 }
