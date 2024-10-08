@@ -1,6 +1,7 @@
 package com.example.springdatajpa.service;
 
 import com.example.springdatajpa.entity.Department;
+import com.example.springdatajpa.exception.DepartmentNotFound;
 import com.example.springdatajpa.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,8 @@ public class DepartmentService {
     }
 
     public Department getDepartment(Long id) {
-        return departmentRepository.findById(id).orElse(null);
+        return departmentRepository.findById(id).orElseThrow(() ->
+                new DepartmentNotFound("Department not found with id: " + id));
     }
 
     public Department getDepartment(String name) {
