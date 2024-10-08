@@ -1,4 +1,4 @@
-package com.example.springdatajpa.exception;
+package com.example.springdatajpa.exception.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ public class ValidationErrorResponse {
 
     @Data
     @AllArgsConstructor
-    static class SingleValidationError {
+    public static class SingleValidationError {
         private String field;
         private String message;
     }
